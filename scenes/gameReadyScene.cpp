@@ -5,14 +5,20 @@
 #include "../cookie.h"
 #include "../textUtils.h"
 
-extern LiquidCrystal lcd;
-extern int buttons[4];
-extern int buttons_led[4];
-bool GAME_START;
+#include "gamePlayScene.h"
+
+// 점프 상태 변수
+bool isJumping_ready;
+unsigned long jumpStartTime_ready = 0;
+
+void drawBackground_ready() {
+    GLCD.ClearScreen();
+
+    drawGround();
+    drawCenteredText(15, "Welcome!!");
+}
 
 void showGameReadyScene() {
-    GAME_START = false;
-
     digitalWrite(buttons_led[0], HIGH);
     digitalWrite(buttons_led[2], HIGH);
     digitalWrite(buttons_led[3], HIGH);
@@ -23,19 +29,34 @@ void showGameReadyScene() {
     lcd.setCursor(0, 1);
     lcd.print("Jump|Start|Exit");
 
-    drawCenteredText(20, "gameReadyScene");
+    jumpY = 0;
+    jumpDelay = 50;
+    jumpHeight = 10;
 }
 
 void updateGameReadyScene() {
     if (digitalRead(buttons[2]) == LOW) { // start
-        lcd.setCursor(0, 1);
-        lcd.print("Jump   |   Pause");
-
-        GAME_START = true;
-
         changeScene(GAME_PLAY);
+
+        return;
     }
     else if (digitalRead(buttons[3]) == LOW) { // exit
+        isJumping_ready = false;
         changeScene(START);
+
+        return;
     }
+
+    int x = 50;
+
+    drawBackground_ready();
+    drawSquareCookie(x, cookieY - jumpY);
+    drawRoundCookie(x + 15, cookieY - jumpY);
+
+    if(!isJumping_ready) {
+        isJumping_ready = !isJumping_ready;
+        jumpStartTime_ready = millis();
+    }
+
+    isJumping_ready = updateJump(isJumping_ready, jumpStartTime_ready);
 }
