@@ -24,6 +24,19 @@ void drawSquareCookie(int x, int y) {
     GLCD.DrawRect(x + 8, y + 4, 2, 2);
     GLCD.DrawRect(x + 4, y + 8, 5, 1);
 }
+void drawSmileCookie(int x, int y) {
+    // 테두리 사각형 (13x13)
+    GLCD.DrawRect(x, y, 13, 13);
+
+    GLCD.DrawRect(x + 3, y + 4, 2, 2);
+    GLCD.DrawRect(x + 8, y + 4, 2, 2);
+
+    GLCD.DrawRect(x + 4, y + 8, 1, 1);
+    GLCD.DrawRect(x + 5, y + 9, 1, 1);
+    GLCD.DrawRect(x + 6, y + 9, 1, 1);
+    GLCD.DrawRect(x + 7, y + 9, 1, 1);
+    GLCD.DrawRect(x + 8, y + 8, 1, 1);
+}
 
 // 동그란 쿠키: 반지름 6 (13x13 크기 안에)
 void drawRoundCookie(int x, int y) {
