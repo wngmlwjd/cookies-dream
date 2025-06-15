@@ -4,6 +4,7 @@
 #include "../sceneManager.h"
 
 extern Scene currentScene;
+extern int jumpY;
 
 void showEndScene();
 void updateEndScene();
