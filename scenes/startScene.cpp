@@ -1,6 +1,4 @@
 #include <openGLCD.h>
-#include <openGLCD_Buildinfo.h>
-#include <openGLCD_Config.h>
 #include <LiquidCrystal.h>
 
 #include "../textUtils.h"
