@@ -1,93 +1,36 @@
-#include <pitches.h>
-#include <LiquidCrystal.h>
 #include <openGLCD.h>
 
-#include "../sceneManager.h"
 #include "../cookie.h"
 #include "../textUtils.h"
+#include "../sceneManager.h"
+#include "../bgm.h"
 
-extern LiquidCrystal lcd;
-extern int buttons[4];
-extern int buttons_led[4];
-extern bool GAME_START;
-
-const int speakerPin = 57;
-bool isBGMPlaying = false;
-int currentNoteIndex = 0;
-unsigned long lastNoteTime = 0;
-int noteDuration = 4;
+bool GAME_START;
+bool RESUME = false;
 
 // 점프 상태 변수
-bool isJumping = false;
-unsigned long jumpStartTime = 0;
-const int jumpHeight = 15;
-const int jumpStep = 1;
-const int jumpDelay = 30;
-int jumpY = 0;
+bool isJumping_play;
+unsigned long jumpStartTime_play;
+
+unsigned long pausedStartTime;
 
 // 버튼 상태 추적
 bool prevJumpButtonState = LOW;
-
-int melody[] = {
-    NOTE_C4, NOTE_D4, NOTE_E4, NOTE_D4, NOTE_E4, NOTE_D4, NOTE_E4,
-    NOTE_D4, NOTE_E4, NOTE_E4, NOTE_F4, NOTE_E4,
-    NOTE_F4, NOTE_E4, NOTE_F4, 0,
-    NOTE_D4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_F4,
-    NOTE_E4, NOTE_F4, NOTE_F4, NOTE_G4, NOTE_F4, NOTE_G4,
-    NOTE_F4, NOTE_G4, 0,
-    NOTE_E4, NOTE_F4, NOTE_G4, NOTE_A4, NOTE_C5, NOTE_C5, NOTE_C5,
-    NOTE_G4, NOTE_C5, NOTE_C5, NOTE_C5, NOTE_G4, NOTE_G4, NOTE_A4,
-    NOTE_B4, NOTE_C5, 0, 0,
-    NOTE_F4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_D4,
-    NOTE_C4, NOTE_D4, 0, 0, 0,
-    NOTE_C4, NOTE_D4, NOTE_E4, NOTE_D4, NOTE_E4, NOTE_D4, NOTE_E4,
-    NOTE_D4, NOTE_E4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_F4,
-    NOTE_E4, NOTE_F4, 0,
-    NOTE_D4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_F4, NOTE_E4,
-    NOTE_F4, NOTE_E4, NOTE_F4, NOTE_F4, NOTE_G4,
-    NOTE_F4, NOTE_G4, NOTE_F4, NOTE_G4, 0,
-    NOTE_E4, NOTE_F4, NOTE_G4, NOTE_A4, NOTE_C5, NOTE_C5,
-    NOTE_C5, NOTE_G4, NOTE_C5, NOTE_C5, NOTE_C5,
-    NOTE_G4, NOTE_G4, NOTE_A4, NOTE_B4, NOTE_C5, 0, 0,
-    NOTE_F4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_F4, NOTE_E4,
-    NOTE_D4, NOTE_B3, NOTE_C4, 0
-};
 
 void drawGround() {
     GLCD.FillRect(0, 55, 128, 10);
 }
 
-void drawBackground() {
+void drawBackground_play() {
     GLCD.ClearScreen();
     drawGround();
-}
-
-void updateJump() {
-    if (!isJumping) return;
-
-    unsigned long now = millis();
-    int elapsed = now - jumpStartTime;
-    int totalFrames = (jumpHeight * 2);
-    int currentFrame = elapsed / jumpDelay;
-
-    if (currentFrame >= totalFrames) {
-        isJumping = false;
-        jumpY = 0;
-        return;
-    }
-
-    if (currentFrame < jumpHeight) {
-        jumpY = currentFrame;
-    } else {
-        jumpY = totalFrames - currentFrame;
-    }
 }
 
 void showGamePlayScene() {
     digitalWrite(buttons_led[0], HIGH);
     digitalWrite(buttons_led[3], HIGH);
 
-    drawBackground();
+    drawBackground_play();
 
     lcd.clear();
     lcd.print("High Score:");
@@ -95,48 +38,57 @@ void showGamePlayScene() {
     lcd.print("Jump   |   Pause");
 
     drawCenteredText(20, "gameScene");
+
+    if(!GAME_START) {
+        GAME_START = true;
+        RESUME = false;
+
+        isJumping_play = false;
+        jumpStartTime_play = 0;
+
+        jumpY = 0;
+        jumpDelay = 30;
+        jumpHeight = 15;
+
+        Serial.println("START");
+    }
+    else {
+        RESUME = true;
+        jumpStartTime_play = millis();
+        // jumpStartTime_play += millis() - pausedStartTime;
+
+        Serial.println("RESUME");
+        Serial.println(jumpStartTime_play - pausedStartTime);
+        Serial.println(jumpStartTime_play);
+    }
 }
 
 void updateGamePlayScene() {
     // Pause (buttons[3]) - LOW일 때 눌림 (게임 중)
     if (digitalRead(buttons[3]) == LOW && GAME_START) {
-        isBGMPlaying = false;
-        noTone(speakerPin);
-        changeScene(PAUSE);  // but keep GAME_START = true
+        stopBGM();
+
+        pausedStartTime = millis();
+
+        Serial.println("PAUSE");
+        Serial.println(pausedStartTime);
         return;
     }
 
     // 점프 버튼 처리
     bool currentJumpButtonState = digitalRead(buttons[0]);  // HIGH일 때 눌림
 
-    updateJump();
-    drawBackground();
+    isJumping_play = updateJump(isJumping_play, jumpStartTime_play);
+    drawBackground_play();
     drawSquareCookie(cookieX, cookieY - jumpY);
 
     // 배경음악 계속 재생
-    unsigned long currentTime = millis();
-    int noteLength = 1000 / noteDuration;
-
-    if (currentTime - lastNoteTime >= noteLength) {
-        int note = melody[currentNoteIndex];
-        if (note == 0) {
-            noTone(speakerPin);
-        } else {
-            tone(speakerPin, note, noteLength);
-        }
-
-        lastNoteTime = currentTime;
-        currentNoteIndex++;
-
-        if (currentNoteIndex >= sizeof(melody) / sizeof(int)) {
-            currentNoteIndex = 0;
-        }
-    }
+    playBGM();
 
     // Jump 트리거
-    if (prevJumpButtonState == LOW && currentJumpButtonState == HIGH && !isJumping) {
-        isJumping = true;
-        jumpStartTime = millis();
+    if (prevJumpButtonState == LOW && currentJumpButtonState == HIGH && !isJumping_play) {
+        isJumping_play = true;
+        jumpStartTime_play = millis();
     }
     prevJumpButtonState = currentJumpButtonState;
 }

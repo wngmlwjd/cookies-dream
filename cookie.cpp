@@ -1,12 +1,19 @@
 #include <openGLCD.h>
-#include <openGLCD_Buildinfo.h>
-#include <openGLCD_Config.h>
 
 #include "cookie.h"
 
 // 쿠키의 고정 위치
 const int cookieX = 20;
 const int cookieY = 42;
+
+// 점프
+int jumpHeight = 15;
+const int jumpStep = 1;
+int jumpDelay = 30;
+int jumpY = 0;
+int elapsed;
+int pre_elapsed;
+bool FIRST = true;
 
 // 네모난 쿠키: 13x13 크기
 void drawSquareCookie(int x, int y) {
@@ -30,4 +37,55 @@ void drawRoundCookie(int x, int y) {
     GLCD.DrawRect(x + 6, y + 9, 1, 1);
     GLCD.DrawRect(x + 7, y + 9, 1, 1);
     GLCD.DrawRect(x + 8, y + 8, 1, 1);
+}
+
+bool updateJump(bool isJumping, unsigned long jumpStartTime) {
+    if (!isJumping) return;
+
+    unsigned long now = millis();
+    elapsed = (now - jumpStartTime);
+    int totalFrames = (jumpHeight * 2);
+    int currentFrame = elapsed / jumpDelay;
+
+    if(RESUME) {
+        if(FIRST) {
+            FIRST = false;
+
+            jumpStartTime_play = now;
+            elapsed = pre_elapsed;
+
+            Serial.println("FIRST");
+            Serial.println(elapsed);
+            Serial.println(jumpStartTime_play);
+        }
+        else {
+            elapsed += pre_elapsed;
+        }
+        
+        currentFrame = elapsed / jumpDelay;
+    }
+    else {
+        pre_elapsed = elapsed;
+    }
+
+    Serial.println("Jump");
+    Serial.println(elapsed);
+    Serial.println(now);
+
+    if (currentFrame >= totalFrames) {
+        isJumping = false;
+        jumpY = 0;
+        RESUME = false;
+        FIRST = true;
+
+        return isJumping;
+    }
+
+    if (currentFrame < jumpHeight) {
+        jumpY = currentFrame;
+    } else {
+        jumpY = totalFrames - currentFrame;
+    }
+
+    return isJumping;
 }
