@@ -1,6 +1,4 @@
 #include <openGLCD.h>
-#include <openGLCD_Buildinfo.h>
-#include <openGLCD_Config.h>
 #include <LiquidCrystal.h>
 
 #include "cookie.h"
@@ -26,6 +24,15 @@ int buttons[] = {14, 15, 16, 17};
 // 버튼 위쪽 LED 핀 번호
 int buttons_led[] = {2, 3, 4, 5};
 
+// 0에서 9까지 숫자 표현을 위한
+// 세그먼트 a, b, c, d, e, f, g, dp의 패턴
+byte patterns[] = {
+    0xFC, 0x60, 0xDA, 0xF2, 0x66, 0xB6, 0xBE, 0xE4, 0xFE, 0xE6
+};
+int digit_select_pin[] = {66, 67, 68, 69}; // 자릿수 선택 핀
+// 7세그먼트 모듈 연결 핀 ‘a, b, c, d, e, f, g, dp’ 순서
+int segment_pin[] = {58, 59, 60, 61, 62, 63, 64, 65};
+
 void setup() {
     // 시리얼 통신 초기화
     Serial.begin(9600);
@@ -45,6 +52,16 @@ void setup() {
 
     // LCD 초기화
     lcd.begin(16, 2);
+    
+    for (int i = 0; i < 8; i++) {
+        pinMode(segment_pin[i], OUTPUT);
+        digitalWrite(segment_pin[i], LOW); // 초기값
+    }
+
+    for (int i = 0; i < 4; i++) {
+        pinMode(digit_select_pin[i], OUTPUT);
+        digitalWrite(digit_select_pin[i], HIGH); // HIGH면 OFF (공통 애노드 기준)
+    }
 
     changeScene(START);
 }
