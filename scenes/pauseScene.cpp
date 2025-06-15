@@ -1,6 +1,4 @@
 #include <openGLCD.h>
-#include <openGLCD_Buildinfo.h>
-#include <openGLCD_Config.h>
 #include <LiquidCrystal.h>
 
 #include "../textUtils.h"
@@ -11,9 +9,6 @@
 LcdTextLine pauseText[] = {
     {0, 0, "Game Paused!!"},
 };
-
-extern bool GAME_START;
-extern bool isJumping;
 
 void showPauseScene() {
     lcd.clear();
@@ -35,8 +30,12 @@ void updatePauseScene() {
     else if (digitalRead(buttons[3]) == LOW) {
         // 종료 → 모든 상태 초기화 필요
         GAME_START = false;
-        isJumping = false;
+        isJumping_play = false;
+
         noTone(speakerPin);
+
+        clear_segments();
+        
         changeScene(START);
     }
 }

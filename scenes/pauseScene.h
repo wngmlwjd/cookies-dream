@@ -8,6 +8,11 @@ extern int buttons_led[];
 extern LiquidCrystal lcd;
 extern Scene currentScene;
 
+extern int speakerPin;
+
+extern bool GAME_START;
+extern bool isJumping_play;
+
 void showPauseScene();
 void updatePauseScene();
 
