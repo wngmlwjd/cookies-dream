@@ -3,6 +3,7 @@
 
 #include "cookie.h"
 #include "sceneManager.h"
+#include "led.h"
 
 #include "scenes/startScene.cpp"
 #include "scenes/gameReadyScene.cpp"
@@ -32,6 +33,8 @@ byte patterns[] = {
 int digit_select_pin[] = {66, 67, 68, 69}; // 자릿수 선택 핀
 // 7세그먼트 모듈 연결 핀 ‘a, b, c, d, e, f, g, dp’ 순서
 int segment_pin[] = {58, 59, 60, 61, 62, 63, 64, 65};
+
+int RGB_LED[] = {8, 7, 6};
 
 void setup() {
     // 시리얼 통신 초기화
@@ -64,21 +67,18 @@ void setup() {
     }
 
     changeScene(START);
+
+    for(int i = 0;i < 3;i++) {
+        pinMode(RGB_LED[i], OUTPUT);    
+    }
+
+    setBestScore(0, 0);
+
+    led_off();
+
+    // Serial.println(read_eeprom_int(0));
 }
 
 void loop() {
     updateScene();
-
-    // GLCD.ClearScreen();
-
-    // drawSquareCookie(50, 40);
-    // // drawRoundCookie(50, 40);
-
-    // if(digitalRead(buttons[0])) {
-    //     jump();
-    // }
-
-    // playBGM();
-
-    // while(true);
 }
