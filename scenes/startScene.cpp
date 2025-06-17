@@ -14,6 +14,8 @@ void showStartScene() {
     GLCD.ClearScreen();
     lcd.clear();
 
+    digitalWrite(buttons_led[0], HIGH);
+
     drawCenteredText(20, "Square's Dream");
     drawCenteredText(40, "start");
 
@@ -22,14 +24,10 @@ void showStartScene() {
 }
 
 void updateStartScene() {
-    int button = 0;
-
-    // 버튼 LED
-    digitalWrite(buttons_led[button], HIGH);
     updateBlinkingText(); // GLCD
-    updateLcdBlinkingText(); // LCD
+    updateLcdBlinkingText(2); // LCD
 
-    if (digitalRead(buttons[button])) {
+    if (digitalRead(buttons[0])) {
         changeScene(GAME_READY);
     }
 }

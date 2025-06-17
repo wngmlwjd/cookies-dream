@@ -2,6 +2,7 @@
 #include <LiquidCrystal.h>
 
 #include "../textUtils.h"
+#include "../led.h"
 
 #include "gamePlayScene.h"
 #include "pauseScene.h"
@@ -18,7 +19,7 @@ void showPauseScene() {
 }
 
 void updatePauseScene() {
-    updateLcdBlinkingText();
+    updateLcdBlinkingText(2);
 
     digitalWrite(buttons_led[2], HIGH); // Resume
     digitalWrite(buttons_led[3], HIGH); // Exit
@@ -35,7 +36,8 @@ void updatePauseScene() {
         noTone(speakerPin);
 
         clear_segments();
-        
+        led_off();
+
         changeScene(START);
     }
 }
