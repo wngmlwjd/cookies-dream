@@ -6,8 +6,10 @@ extern const int cookieY;
 
 extern unsigned long totalPauseDuration;
 
-extern bool RESUME;
 extern unsigned long jumpStartTime_play;
+
+extern bool RESUME;
+extern bool CHECK;
 
 // 네모난 쿠키 그리기 함수
 void drawSquareCookie(int x, int y);

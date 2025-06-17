@@ -11,8 +11,8 @@ int jumpHeight = 15;
 const int jumpStep = 1;
 int jumpDelay = 30;
 int jumpY = 0;
-int elapsed;
 int pre_elapsed;
+int now_elapsed;
 bool FIRST = true;
 
 // 네모난 쿠키: 13x13 크기
@@ -56,20 +56,21 @@ bool updateJump(bool isJumping, unsigned long jumpStartTime) {
     if (!isJumping) return;
 
     unsigned long now = millis();
-    elapsed = (now - jumpStartTime);
+    int elapsed = (now - jumpStartTime);
     int totalFrames = (jumpHeight * 2);
     int currentFrame = elapsed / jumpDelay;
 
     if(RESUME) {
-        if(FIRST) {
-            FIRST = false;
+        if(CHECK) {
+            CHECK = false;
 
             jumpStartTime_play = now;
+            pre_elapsed = now_elapsed;
             elapsed = pre_elapsed;
 
-            Serial.println("FIRST");
-            Serial.println(elapsed);
-            Serial.println(jumpStartTime_play);
+            // Serial.println("CHECK");
+            // Serial.println(elapsed);
+            // Serial.println(jumpStartTime_play);
         }
         else {
             elapsed += pre_elapsed;
@@ -77,13 +78,12 @@ bool updateJump(bool isJumping, unsigned long jumpStartTime) {
         
         currentFrame = elapsed / jumpDelay;
     }
-    else {
-        pre_elapsed = elapsed;
-    }
 
-    Serial.println("Jump");
-    Serial.println(elapsed);
-    Serial.println(now);
+    now_elapsed = elapsed;
+
+    // Serial.println("Jump");
+    // Serial.println(elapsed);
+    // Serial.println(now);
 
     if (currentFrame >= totalFrames) {
         isJumping = false;

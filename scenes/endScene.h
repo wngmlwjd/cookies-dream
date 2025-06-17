@@ -6,7 +6,13 @@
 extern Scene currentScene;
 extern int jumpY;
 
+extern int currentStage;
+
+extern int bestScore;
+
 void showEndScene();
 void updateEndScene();
+
+int getBestScore(int n);
 
 #endif
