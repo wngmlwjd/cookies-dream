@@ -14,13 +14,6 @@ Scene currentScene = START;
 void changeScene(Scene newScene) {
   currentScene = newScene;
 
-  // lcd.clear();
-  // lcd.print(currentScene);
-  // delay(500);
-
-  // GLCD.ClearScreen();
-  // lcd.clear();
-
   for (int i = 0; i < 4; i++) {
     digitalWrite(buttons_led[i], LOW);
   }
