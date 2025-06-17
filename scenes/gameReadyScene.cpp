@@ -6,57 +6,78 @@
 #include "../textUtils.h"
 
 #include "gamePlayScene.h"
+#include "gameReadyScene.h"
 
-// 점프 상태 변수
-bool isJumping_ready;
-unsigned long jumpStartTime_ready = 0;
+LcdTextLine readyText[] = {
+    {0, 0, "Select Stage!!"},
+    {0, 1, "Up|Down|Ok|Exit"}
+};
+
+int stageNum = 3;
+stageName stageList[] = {{10, "Stage 1"}, {25, "Stage 2"}, {40, "Stage 3"}};
 
 void drawBackground_ready() {
     GLCD.ClearScreen();
 
     drawGround();
-    drawCenteredText(15, "Welcome!!");
+
+    int x = 10;
+
+    drawSquareCookie(x, cookieY);
+    drawRoundCookie(116 - x, cookieY);
+
+    for(int i = 0;i < stageNum;i++) {
+        drawCenteredText(stageList[i].line, stageList[i].name);
+    }
 }
 
 void showGameReadyScene() {
+    GLCD.ClearScreen();
+    lcd.clear();
+
     digitalWrite(buttons_led[0], HIGH);
+    digitalWrite(buttons_led[1], HIGH);
     digitalWrite(buttons_led[2], HIGH);
     digitalWrite(buttons_led[3], HIGH);
 
-    GLCD.ClearScreen();
-    lcd.clear();
-    lcd.print("High Score:");
-    lcd.setCursor(0, 1);
-    lcd.print("Jump|Start|Exit");
+    currentStage = 0;
 
-    jumpY = 0;
-    jumpDelay = 50;
-    jumpHeight = 10;
+    drawBackground_ready();
+
+    setupBlinkingText(10, "Stage 1");
+    setupLcdBlinkingText(readyText, 2);
 }
 
 void updateGameReadyScene() {
-    if (digitalRead(buttons[2]) == LOW) { // start
+    if (digitalRead(buttons[0])) {
+        if(currentStage > 0) {
+            currentStage--;
+
+            setupBlinkingText(stageList[currentStage].line, stageList[currentStage].name);
+
+            delay(500);
+        }
+    }
+    else if (digitalRead(buttons[1])) {
+        if(currentStage < 2) {
+            currentStage++;
+
+            setupBlinkingText(stageList[currentStage].line, stageList[currentStage].name);
+
+            delay(500);
+        }
+    }
+    else if (digitalRead(buttons[2]) == LOW) {
         changeScene(GAME_PLAY);
 
         return;
     }
-    else if (digitalRead(buttons[3]) == LOW) { // exit
-        isJumping_ready = false;
+    else if (digitalRead(buttons[3]) == LOW) {
         changeScene(START);
 
         return;
     }
 
-    int x = 50;
-
-    drawBackground_ready();
-    drawSquareCookie(x, cookieY - jumpY);
-    drawRoundCookie(x + 15, cookieY - jumpY);
-
-    if(!isJumping_ready) {
-        isJumping_ready = !isJumping_ready;
-        jumpStartTime_ready = millis();
-    }
-
-    isJumping_ready = updateJump(isJumping_ready, jumpStartTime_ready);
+    updateBlinkingText(); // GLCD
+    updateLcdBlinkingText(0); // LCD
 }
