@@ -1,0 +1,182 @@
+int melody[] = {
+    // 도레미 레미레미 레미미 파미 파미파
+    NOTE_C4, NOTE_D4, NOTE_E4,
+    NOTE_D4, NOTE_E4, NOTE_D4, NOTE_E4,
+    NOTE_D4, NOTE_E4, NOTE_E4,
+    NOTE_F4, NOTE_E4,
+    NOTE_F4, NOTE_E4, NOTE_F4,
+
+    // (네모난 침대에서 일어나 눈을 떠보면)
+    0,
+
+    // 레미파 미파미파 미파파 솔파솔 파솔
+    NOTE_D4, NOTE_E4, NOTE_F4,
+    NOTE_E4, NOTE_F4, NOTE_E4, NOTE_F4,
+    NOTE_E4, NOTE_F4, NOTE_F4,
+    NOTE_G4, NOTE_F4, NOTE_G4,
+    NOTE_F4, NOTE_G4,
+
+    // (네모난 창문으로 보이는 똑같은 풍경)
+    0,
+
+    // 미파솔 라도도도 솔도도 도솔솔라 시도
+    NOTE_E4, NOTE_F4, NOTE_G4,
+    NOTE_A4, NOTE_C5, NOTE_C5, NOTE_C5,
+    NOTE_G4, NOTE_C5, NOTE_C5,
+    NOTE_C5, NOTE_G4, NOTE_G4, NOTE_A4,
+    NOTE_B4, NOTE_C5,
+
+    // (네모난 문을열고 네모난 테이블에 앉아)
+    0,
+    0,
+
+    // 파미파 미파미레 도레
+    NOTE_F4, NOTE_E4, NOTE_F4,
+    NOTE_E4, NOTE_F4, NOTE_E4, NOTE_D4,
+    NOTE_C4, NOTE_D4,
+
+    // (네모난 조각신문 본뒤)
+    0,
+    0,
+    0,
+
+    // 도레미 레파레파 레파파 파미파 미파
+    NOTE_C4, NOTE_D4, NOTE_E4,
+    NOTE_D4, NOTE_E4, NOTE_D4, NOTE_E4,
+    NOTE_D4, NOTE_E4, NOTE_E4,
+    NOTE_F4, NOTE_E4, NOTE_F4,
+    NOTE_E4, NOTE_F4,
+
+    // (네모난 책가방에 네모난 책들을 넣고)
+    0,
+
+    // 레미파 미파미 파미 파파솔 파솔 파솔
+    NOTE_D4, NOTE_E4, NOTE_F4,
+    NOTE_E4, NOTE_F4, NOTE_E4,
+    NOTE_F4, NOTE_E4,
+    NOTE_F4, NOTE_F4, NOTE_G4,
+    NOTE_F4, NOTE_G4,
+    NOTE_F4, NOTE_G4,
+
+    // (네모난 버스를 타고 네모난 건물을 지나)
+    0,
+
+    // 미파솔 라도도 도솔도도 도 솔솔라 시도
+    NOTE_E4, NOTE_F4, NOTE_G4,
+    NOTE_A4, NOTE_C5, NOTE_C5,
+    NOTE_C5, NOTE_G4, NOTE_C5, NOTE_C5,
+    NOTE_C5,
+    NOTE_G4, NOTE_G4, NOTE_A4,
+    NOTE_B4, NOTE_C5,
+
+    // (네모난 학교에 들어서면 또 네모난 교실)
+    0,
+    0,
+
+    // 파미파 미파미 레시도
+    NOTE_F4, NOTE_E4, NOTE_F4,
+    NOTE_E4, NOTE_F4, NOTE_E4,
+    NOTE_D4, NOTE_B3, NOTE_C4,
+
+    // (네모난 칠판과 책상들)
+    0,
+
+    // // 미미미 미미미 미미미 미미미 라미
+    // NOTE_E4, NOTE_E4, NOTE_E4,
+    // NOTE_E4, NOTE_E4, NOTE_E4,
+    // NOTE_E4, NOTE_E4, NOTE_E4,
+    // NOTE_E4, NOTE_E4, NOTE_E4,
+    // NOTE_A4, 0, NOTE_E4,
+
+    // // (네모난 오디오 네모난 컴퓨터 TV)
+    // 0,
+    // 0,
+    // 0,
+
+    // // 미미미 미미미 미미미 미미미 라시도
+    // NOTE_E4, NOTE_E4, NOTE_E4,
+    // NOTE_E4, NOTE_E4, NOTE_E4,
+    // NOTE_E4, NOTE_E4, NOTE_E4,
+    // NOTE_E4, NOTE_E4, NOTE_E4,
+    // NOTE_A4, 0, NOTE_B4, 0, NOTE_C5, 0,
+
+    // // (네모난 달력에 그려진 똑같은 하루는)
+    // 0,
+    // 0,
+    // 0,
+
+    // // 파솔솔 라파레도 라파 레도 시시도도레
+    // NOTE_F4, 0, NOTE_G4, 0, NOTE_A4, 0,
+    // NOTE_G4, NOTE_A4, 0, NOTE_C5, NOTE_B4,
+    // NOTE_C5, NOTE_B4,
+    // NOTE_D5, NOTE_C5,
+    // NOTE_B4, NOTE_B4, NOTE_C5, NOTE_D5, NOTE_E5,
+
+    // // (의식도 못한채로 그냥 숨만 쉬고있는걸)
+    // 0,
+
+    // // 도라 시라솔파
+    // NOTE_C4, NOTE_A4,
+    // NOTE_B4, NOTE_A4, NOTE_G4, NOTE_F4,
+
+    // // (주윌(주위) 둘러보면)
+    // 0,
+
+    // // 파파 파파파 솔도 도시라
+    // NOTE_F4, NOTE_F4,
+    // NOTE_F4, NOTE_F4, NOTE_F4,
+    // NOTE_G4, NOTE_C4,
+    // NOTE_D4, NOTE_C4, NOTE_A4,
+
+    // // (모두 네모난 것들 뿐인데)
+    // 0,
+
+    // // 레레 레레레 미미 파파파 파파파 솔파 파솔
+    // NOTE_D4, NOTE_D4,
+    // NOTE_D4, NOTE_D4, NOTE_D4,
+    // NOTE_E4, NOTE_E4,
+    // NOTE_F4, NOTE_F4, NOTE_F4,
+    // NOTE_F4, NOTE_F4, NOTE_F4,
+    // NOTE_G4, NOTE_F4,
+    // NOTE_G4, NOTE_F4,
+
+    // // (우린 언제나 듣지 잘난 어른에 멋진 이말)
+    // 0,
+
+    // // 라라파 도레미 파도라솔
+    // NOTE_A4, NOTE_A4, NOTE_F4,
+    // NOTE_C4, NOTE_D4, NOTE_E4,
+    // NOTE_F4, NOTE_D4, NOTE_G4,
+
+    // // (세상은 둥글게 살아야해)
+    // 0,
+
+    // // 도라도시 솔파 파파 파파 솔도 도시라
+    // NOTE_C4, NOTE_A4, NOTE_D4,
+    // NOTE_G4, NOTE_F4,
+    // NOTE_F4, NOTE_F4,
+    // NOTE_F4, NOTE_G4, NOTE_C4,
+    // NOTE_D4, NOTE_C4, NOTE_A4,
+
+    // // (지구본을 보면 우리 사는 지군(지구) 둥근데)
+    // 0,
+
+    // // 레레레레레 미미 파파파솔솔 파솔
+    // NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4,
+    // NOTE_E4, NOTE_E4,
+    // NOTE_F4, NOTE_F4, NOTE_F4, NOTE_G4, NOTE_G4,
+    // NOTE_F4, NOTE_G4,
+
+    // // (부속품들은 왜다 온통네모난지 몰라)
+    // 0,
+
+    // // 라라파 도레 마파도 라라라 라파
+    // NOTE_A4, NOTE_A4, NOTE_F4,
+    // NOTE_C4, NOTE_D4,
+    // NOTE_G4, NOTE_D4,
+    // NOTE_A4, NOTE_A4, NOTE_A4,
+    // NOTE_A4, NOTE_F4,
+
+    // // (어쩌면 그건 네모의 꿈일지 몰라)
+    // 0,
+};
