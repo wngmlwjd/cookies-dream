@@ -13,10 +13,20 @@ struct Stage {
 extern Stage stages[];
 extern int currentStage;
 
+extern const int cookieX;
+extern int jumpY;
+
+extern const int score_per_jump;
+extern const int score_per_collision;
+
+extern int gameScore;
+
 void resetObstacles();
-void updateAndDrawObstacles(unsigned long currentTime);
+bool updateAndDrawObstacles(unsigned long currentTime);
 
 bool isAllObstaclesCleared();
 bool shouldSpawnFinalCookie();
+
+bool checkCollisionWithCookie(double obsX, int obsY, int obsW, int obsH);
 
 #endif
