@@ -16,7 +16,7 @@ void showStartScene() {
 
     digitalWrite(buttons_led[0], HIGH);
 
-    drawCenteredText(20, "Square's Dream");
+    drawCenteredText(20, "Cookie's Dream");
     drawCenteredText(40, "start");
 
     setupBlinkingText(40, "start");
