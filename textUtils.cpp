@@ -1,80 +1,56 @@
 #include <openGLCD.h>
 #include <LiquidCrystal.h>
 
+#include "sceneManager.h"
+
 #include "textUtils.h"
 
 // 7세그먼트
 int SEGMENT_DELAY = 5; // 숫자 표시 사이의 시간 간격
 
+Scene pre_scene = START;
+
 void clear_segments() {
-    for (int i = 0; i < 7; i++) {
-        digitalWrite(digit_select_pin[i], HIGH);    
-    }
-}
-
-void set_segments_for_number(int num) {
-    byte pattern = patterns[num];
-
-    for (int i = 0; i < 7; i++) {
-        bool is_on = (pattern >> (6 - i)) & 0x01;  // 6부터 시작
-        
-        digitalWrite(segment_pin[i], is_on);      // 아날로그가 아니라 디지털
-    }
-}
-
-void set_digit_position(int pos) {
+    // 모든 자리 선택 핀 끄기 (HIGH)
     for (int i = 0; i < 4; i++) {
-        digitalWrite(digit_select_pin[i], HIGH); // 모든 자리 끔
+        digitalWrite(digit_select_pin[i], HIGH);
     }
-    digitalWrite(digit_select_pin[pos - 1], LOW); // 해당 자리 켬
+
+    // 모든 세그먼트 끄기 (LOW)
+    for (int i = 0; i < 8; i++) {
+        digitalWrite(segment_pin[i], LOW);
+    }
 }
 
 // 해당 자리에 숫자 하나를 표시하는 함수
-void show_digit(int pos, int num) {
-    set_digit_position(pos);
-    if (num == -1) {
-        clear_segments(); // 모든 세그먼트를 꺼주는 함수
-    } else {
-        set_segments_for_number(num);
+void show_digit(int pos, int number) { // (위치, 출력할 숫자)
+    for (int i = 0; i < 4; i++) {
+        if (i + 1 == pos) // 해당 자릿수의 선택 핀만 LOW로 설정
+        digitalWrite(digit_select_pin[i], LOW);
+        else // 나머지 자리는 HIGH로 설정
+        digitalWrite(digit_select_pin[i], HIGH);
+    }
+    for (int i = 0; i < 8; i++) {
+        boolean on_off = bitRead(patterns[number], 7 - i);
+        digitalWrite(segment_pin[i], on_off);
     }
 }
 
-// 4자리 7세그먼트 표시 장치에 4자리 숫자를 표시하는 함수
-void show_4_digit(int number) {
+void show_4_digit(int _number) {
+    int number = _number;
     number = number % 10000; // 4자리로 제한
-
-    int thousands = number / 1000;
-    int hundreds = (number % 1000) / 100;
-    int tens = (number % 100) / 10;
-    int ones = number % 10;
-
-    bool started = false;
-
-    if (thousands != 0) {
-        show_digit(1, thousands);
-        started = true;
-    } else {
-        show_digit(1, -1); // -1: 꺼짐
-    }
+    int thousands = number / 1000; // 천 자리
+    number = number % 1000;
+    int hundreads = number / 100; // 백 자리
+    number = number % 100;
+    int tens = number / 10; // 십 자리
+    int ones = number % 10; // 일 자리
+    if (_number > 999) show_digit(1, thousands);
     delay(SEGMENT_DELAY);
-
-    if (hundreds != 0 || started) {
-        show_digit(2, hundreds);
-        started = true;
-    } else {
-        show_digit(2, -1);
-    }
+    if (_number > 99) show_digit(2, hundreads);
     delay(SEGMENT_DELAY);
-
-    if (tens != 0 || started) {
-        show_digit(3, tens);
-        started = true;
-    } else {
-        show_digit(3, -1);
-    }
+    if (_number > 9) show_digit(3, tens);
     delay(SEGMENT_DELAY);
-
-    // 일의 자리는 무조건 표시
     show_digit(4, ones);
     delay(SEGMENT_DELAY);
 }
@@ -106,7 +82,31 @@ void drawCenteredText(int y, const String& text, bool withBox) {
     }
 }
 
+void drawRightAlignedText(int y, const String& text, bool withBox = false) {
+    int charWidth = 6;
+    int charHeight = 8;
+    int padding = 3;
+    int screenWidth = 128;
+    int textWidth = text.length() * charWidth;
+    int x = screenWidth - textWidth;  // 오른쪽 정렬
+
+    GLCD.SelectFont(System5x7);
+    GLCD.GotoXY(x, y);
+    GLCD.print(text);
+
+    if (withBox) {
+        GLCD.DrawRect(x - padding, y - padding, textWidth + padding * 2 - 1, charHeight + padding * 2 - 1);
+    }
+}
+
+
 void setupBlinkingText(int y, const String& text) {
+    static int prevBlinkX = -1;
+    static int prevBlinkY = -1;
+    static int prevBlinkW = 0;
+    static int prevBlinkH = 0;
+    static String prevText = "";
+
     int charWidth = 6;
     int charHeight = 8;
     int padding = 3;
@@ -114,14 +114,40 @@ void setupBlinkingText(int y, const String& text) {
     int textWidth = text.length() * charWidth;
     int x = (screenWidth - textWidth) / 2;
 
+    if(currentScene == pre_scene) {
+        // 이전 깜빡임 영역 클리어 (padding 포함)
+        if (prevBlinkX != -1 && prevBlinkY != -1) {
+            GLCD.FillRect(prevBlinkX, prevBlinkY, prevBlinkW, prevBlinkH, WHITE); // 배경색으로 지우기
+            // 이전 텍스트 원래 위치에 다시 그리기
+            GLCD.GotoXY(prevBlinkX + padding, prevBlinkY + padding);
+            GLCD.print(prevText);
+        }
+    }
+
+    // 새 깜빡임 설정
     blinkX = x - padding;
     blinkY = y - padding;
     blinkW = textWidth + padding * 2 - 1;
     blinkH = charHeight + padding * 2 - 1;
+
     blinkingEnabled = true;
     blinkVisible = true;
     lastBlink = millis();
+
+    // 새 텍스트 기본 출력
+    GLCD.GotoXY(x, y);
+    GLCD.print(text);
+
+    // 이전 정보 갱신
+    prevBlinkX = blinkX;
+    prevBlinkY = blinkY;
+    prevBlinkW = blinkW;
+    prevBlinkH = blinkH;
+    prevText = text;
+
+    pre_scene = currentScene;
 }
+
 
 void updateBlinkingText() {
     if (!blinkingEnabled) return;
@@ -152,7 +178,7 @@ void setupLcdBlinkingText(const LcdTextLine* lines, int lineCount) {
     }
 }
 
-void updateLcdBlinkingText() {
+void updateLcdBlinkingText(int mode) {
     if (!lcdBlinkLines || lcdLineCount == 0) return;
 
     unsigned long now = millis();
@@ -161,7 +187,12 @@ void updateLcdBlinkingText() {
         lcdVisible = !lcdVisible;
 
         for (int i = 0; i < lcdLineCount; ++i) {
-            lcd.setCursor(lcdBlinkLines[i].col, lcdBlinkLines[i].row);
+            int row = lcdBlinkLines[i].row;
+
+            // 조건: mode == 2 (두 줄 모두) || mode와 row가 일치해야 함
+            if (mode != 2 && row != mode) continue;
+
+            lcd.setCursor(lcdBlinkLines[i].col, row);
 
             if (lcdVisible) {
                 lcd.print(lcdBlinkLines[i].text);
@@ -178,4 +209,3 @@ void updateLcdBlinkingText() {
         }
     }
 }
-
