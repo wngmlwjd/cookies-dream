@@ -45,6 +45,8 @@ void playBGM() {
     unsigned long currentTime = millis();
     int noteLength = 1000 / noteDuration;
 
+    // Serial.println("BGM");
+
     if (currentTime - lastNoteTime >= noteLength) {
         int note = melody[currentNoteIndex];
         if (note == 0) {
