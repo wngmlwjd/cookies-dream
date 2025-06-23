@@ -9,52 +9,56 @@
 
 #include "sceneManager.h"
 
-Scene currentScene = START;
+Scene currentScene = START;  // 현재 씬 상태
 
+// 씬 전환 함수
 void changeScene(Scene newScene) {
-  currentScene = newScene;
+  currentScene = newScene;  // 현재 씬 변경
 
+  // 버튼 LED 모두 끄기
   for (int i = 0; i < 4; i++) {
     digitalWrite(buttons_led[i], LOW);
   }
 
+  // 새 씬에 맞는 화면 출력
   switch (newScene) {
     case START:
-      showStartScene();
+      showStartScene();  // 시작 화면
       break;
     case GAME_READY:
-      showGameReadyScene();
+      showGameReadyScene();  // 스테이지 선택 화면
       break;
     case GAME_PLAY:
-      showGamePlayScene();
+      showGamePlayScene();  // 게임 플레이 화면
       break;
     case PAUSE:
-      showPauseScene();
+      showPauseScene();  // 일시정지 화면
       break;
     case END:
-      showEndScene();
+      showEndScene();  // 종료 화면
       break;
   }
 
-  delay(500);
+  delay(500);  // 전환 후 잠시 대기
 }
 
+// 현재 씬 업데이트 함수
 void updateScene() {
   switch (currentScene) {
     case START:
-      updateStartScene();
+      updateStartScene();  // 시작 화면 업데이트
       break;
     case GAME_READY:
-      updateGameReadyScene();
+      updateGameReadyScene();  // 스테이지 선택 화면 업데이트
       break;
     case GAME_PLAY:
-      updateGamePlayScene();
+      updateGamePlayScene();  // 게임 플레이 화면 업데이트
       break;
     case PAUSE:
-      updatePauseScene();
+      updatePauseScene();  // 일시정지 화면 업데이트
       break;
     case END:
-      updateEndScene();
+      updateEndScene();  // 종료 화면 업데이트
       break;
   }
 }
